@@ -1,0 +1,25 @@
+.button {
+  display: flex;
+  padding: 14px 40px;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 5px;
+
+  text-align: center;
+  font-family: Fira Mono;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.primary {
+  background: #858585;
+  color: #fff;
+}
+
+.secondary {
+  background: #d3d3d3;
+  color: #323232;
+}

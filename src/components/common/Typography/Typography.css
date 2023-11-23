@@ -1,0 +1,37 @@
+.typography {
+  color: #000;
+
+  font-family: Fira Sans;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.title-1 {
+  font-weight: 300;
+}
+
+.title-2 {
+  font-weight: 400;
+}
+
+.label {
+  color: rgba(0, 0, 0, 0.54);
+
+  font-family: Roboto;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.button {
+  text-align: center;
+  font-family: Fira Mono;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-transform: none;
+}

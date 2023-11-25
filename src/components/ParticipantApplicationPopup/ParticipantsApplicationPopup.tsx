@@ -12,62 +12,165 @@ import {
   InputAdornment,
   InputLabel,
   FormControl,
-  IconButton
+  IconButton,
+  MenuItem,
+  Box,
+  Chip
 } from '@mui/material';
+
+import type {
+  GetEventsParams,
+  Cities,
+  EventType,
+  EventTheme,
+  Participant,
+  Event
+} from '../../api/instance';
+import {
+  getCities,
+  getEventsTypes,
+  getEventsThemes,
+  getEvents,
+  postEventsRequests
+} from '../../api/instance';
 
 import './ParticipantsApplicationPopup.css';
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+};
+
+export interface PopupDataProps {
+  participant: Participant;
+  eventId?: Event['id'];
+}
+
 export interface ParticipantsApplicationPopupProps {
-  onSubmit: () => void;
+  popupData: PopupDataProps;
+  updatePopupData: (popupData: PopupDataProps) => void;
   onClose: () => void;
-  onCancel: () => void;
 }
 
 export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopupProps> = ({
-  onSubmit,
-  onClose,
-  onCancel
+  popupData,
+  updatePopupData,
+  onClose
 }) => {
-  const [age, setAge] = React.useState('');
-  const changeAge = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
-  };
-  const ageList = Array.from({ length: 84 }, (_, i) => i + 16);
-
-  const [country, setCountry] = React.useState('');
-  const changeCountry = (event: SelectChangeEvent) => {
-    setCountry(event.target.value);
-  };
-  const countryList = ['Россия', 'Казахстан', 'Белорусь', 'Азербайджан'];
-
-  const [city, setCity] = React.useState('');
-  const changeCity = (event: SelectChangeEvent) => {
-    setCity(event.target.value);
-  };
-  const cityList = ['Россия', 'Казахстан', 'Белорусь', 'Азербайджан'];
-
-  const [eventType, setEventType] = React.useState('');
-  const changeEventType = (event: SelectChangeEvent) => {
-    setEventType(event.target.value);
-  };
-  const eventTypeList = ['лекция', 'урок', 'сходка', 'квартирник'];
-
-  const [eventTheme, setEventTheme] = React.useState('');
-  const changeEventTheme = (event: SelectChangeEvent) => {
-    setEventTheme(event.target.value);
-  };
-  const eventThemeList = ['еда', 'карты', 'свечи', 'растения'];
-
-  const [event, setEvent] = React.useState('');
-  const changeEvent = (event: SelectChangeEvent) => {
-    setEvent(event.target.value);
-  };
-  const eventList = [
-    'Кулинарный курс лекций',
-    'Карточные фокусы',
-    'Урок свечеварения',
-    'Массовая пересадка замиакулькасов'
+  const countryList = [
+    { id: 'RUS', name: 'Россия' },
+    { id: 'KAZ', name: 'Казахстан' },
+    { id: 'BLR', name: 'Белорусь' },
+    { id: 'AZE', name: 'Азербайджан' }
   ];
+  const ageList = Array.from({ length: 84 }, (_, i) => i + 16);
+  const {
+    participant: { person, age, address, about },
+    eventId
+  } = popupData;
+
+  const [cityList, setCityList] = React.useState<Cities[]>([]);
+  const [eventTypes, setEventTypes] = React.useState<string[]>([]);
+  const [eventTypeList, setEventTypeList] = React.useState<EventType[]>([]);
+  const [eventThemes, setEventThemes] = React.useState<string[]>([]);
+  const [eventThemeList, setEventThemeList] = React.useState<EventTheme[]>([]);
+  const [eventList, setEventList] = React.useState<Event[]>([]);
+
+  React.useEffect(() => {
+    getEventsTypes().then((data) => {
+      setEventTypeList(data);
+    });
+    getEventsThemes().then((data) => {
+      setEventThemeList(data);
+    });
+  }, []);
+
+  const changeLastName = (event: SelectChangeEvent) => {
+    const popupDataUpdated = { ...popupData };
+    popupDataUpdated.participant.person.lastName = event.target.value;
+    updatePopupData(popupDataUpdated);
+  };
+  const changeFirstName = (event: SelectChangeEvent) => {
+    const popupDataUpdated = { ...popupData };
+    popupDataUpdated.participant.person.firstName = event.target.value;
+    updatePopupData(popupDataUpdated);
+  };
+  const changeMiddleName = (event: SelectChangeEvent) => {
+    const popupDataUpdated = { ...popupData };
+    popupDataUpdated.participant.person.middleName = event.target.value;
+    updatePopupData(popupDataUpdated);
+  };
+  const changeAbout = (event: SelectChangeEvent) => {
+    const popupDataUpdated = { ...popupData };
+    popupDataUpdated.participant.about = event.target.value;
+    updatePopupData(popupDataUpdated);
+  };
+  const changeAge = (event: SelectChangeEvent) => {
+    const popupDataUpdated = { ...popupData };
+    popupDataUpdated.participant.age = event.target.value;
+    updatePopupData(popupDataUpdated);
+  };
+  const changeCity = (event: SelectChangeEvent) => {
+    const popupDataUpdated = { ...popupData };
+    popupDataUpdated.participant.address.city = event.target.value;
+    updatePopupData(popupDataUpdated);
+  };
+  const changeCountry = (event: SelectChangeEvent) => {
+    const popupDataUpdated = { ...popupData };
+    popupDataUpdated.participant.address.countryId = event.target.value;
+    if (!event.target.value) {
+      setCityList([]);
+      return;
+    }
+    getCities(event.target.value).then((data) => {
+      setCityList(data);
+    });
+  };
+
+  const changeEventTypes = (event: SelectChangeEvent) => {
+    const {
+      target: { value }
+    } = event;
+    setEventTypes(typeof value === 'string' ? value.split(',') : value);
+  };
+  const changeEventThemes = (event: SelectChangeEvent) => {
+    const {
+      target: { value }
+    } = event;
+    setEventThemes(typeof value === 'string' ? value.split(',') : value);
+  };
+
+  const requestEvents = () => {
+    const reqParams: GetEventsParams = {
+      typeId: +eventTypes[0],
+      themeId: +eventThemes[0],
+      city: address.city,
+      countryId: address.countryId
+    };
+    getEvents(reqParams).then((data) => {
+      setEventList(data);
+    });
+  };
+
+  const changeEvent = (event: SelectChangeEvent) => {
+    const popupDataUpdated = { ...popupData };
+    popupDataUpdated.eventId = +event.target.value;
+    updatePopupData(popupDataUpdated);
+  };
+
+  const sendParticipantApplication = () => {
+    if (eventId)
+      postEventsRequests({ participant: { person, age, address, about }, eventId }).then((data) => {
+        console.log(data);
+      });
+    onClose();
+  };
 
   return (
     <Popup>
@@ -81,39 +184,76 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
         <Typography variant='title-2'>Поиск события</Typography>
         <div className='participantsApplicationPopup-fieldsContainer'>
           <Select
-            value={country}
+            value={address.countryId}
             onChange={changeCountry}
-            itemList={countryList}
+            itemList={countryList.map((e) => e.name)}
             id='country'
             label='Страна'
             minWidth={'calc((100% - 10px)/2)'}
-          />
+          >
+            <MenuItem value=''>
+              <em>None</em>
+            </MenuItem>
+            {countryList.map((item) => (
+              <MenuItem value={item.id}>{item.name}</MenuItem>
+            ))}
+          </Select>
           <Select
-            value={city}
+            value={address.city}
             onChange={changeCity}
-            itemList={cityList}
             id='city'
             label='Город'
             minWidth={'calc((100% - 10px)/2)'}
-          />
+            disabled={!cityList.length}
+          >
+            <MenuItem value=''>
+              <em>None</em>
+            </MenuItem>
+            {cityList.map((item) => (
+              <MenuItem value={item.city}>{item.city}</MenuItem>
+            ))}
+          </Select>
         </div>
         <div className='participantsApplicationPopup-fieldsContainer'>
           <Select
-            value={eventType}
-            onChange={changeEventType}
+            value={eventTypes}
+            onChange={changeEventTypes}
             itemList={eventTypeList}
             id='eventType'
             label='Тип события'
             minWidth={'calc((100% - 10px)/2)'}
-          />
+            multiple
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} />
+                ))}
+              </Box>
+            )}
+          >
+            {eventTypeList.map((item) => (
+              <MenuItem value={item.id}>{item.name}</MenuItem>
+            ))}
+          </Select>
           <Select
-            value={eventTheme}
-            onChange={changeEventTheme}
-            itemList={eventThemeList}
+            value={eventThemes}
+            onChange={changeEventThemes}
             id='eventTheme'
             label='Тема события'
             minWidth={'calc((100% - 10px)/2)'}
-          />
+            multiple
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} />
+                ))}
+              </Box>
+            )}
+          >
+            {eventThemeList.map((item) => (
+              <MenuItem value={item.id}>{item.name}</MenuItem>
+            ))}
+          </Select>
         </div>
       </div>
 
@@ -121,22 +261,53 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
         <Typography variant='title-2'>Событие</Typography>
         <div className='participantsApplicationPopup-fieldsContainer'>
           <Select
-            value={event}
+            required
+            value={eventId}
             onChange={changeEvent}
-            itemList={eventList}
+            onOpen={requestEvents}
             id='event'
             label='Событие'
             minWidth={'100%'}
-          />
+          >
+            <MenuItem value=''>
+              <em>None</em>
+            </MenuItem>
+            {eventList.map((item) => (
+              <MenuItem value={item.id}>{item.name}</MenuItem>
+            ))}
+          </Select>
         </div>
       </div>
 
       <div className='participantsApplicationPopup-body'>
         <Typography variant='title-2'>Личная информация</Typography>
         <div className='participantsApplicationPopup-fieldsContainer'>
-          <TextField fullWidth id='textField-personLastName' label='Фамилия' variant='filled' />
-          <TextField fullWidth id='textField-personFirstName' label='Имя' variant='filled' />
-          <TextField fullWidth id='textField-personMiddleName' label='Отчество' variant='filled' />
+          <TextField
+            required
+            fullWidth
+            id='textField-personLastName'
+            label='Фамилия'
+            variant='filled'
+            value={person.lastName}
+            onChange={changeLastName}
+          />
+          <TextField
+            required
+            fullWidth
+            id='textField-personFirstName'
+            label='Имя'
+            variant='filled'
+            value={person.firstName}
+            onChange={changeFirstName}
+          />
+          <TextField
+            fullWidth
+            id='textField-personMiddleName'
+            label='Отчество'
+            variant='filled'
+            value={person.middleName}
+            onChange={changeMiddleName}
+          />
         </div>
         <Select
           value={age}
@@ -145,7 +316,15 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
           minWidth='calc((100% - 20px)/3)'
           id='age'
           label='Возраст'
-        />
+          MenuProps={MenuProps}
+        >
+          <MenuItem value=''>
+            <em>None</em>
+          </MenuItem>
+          {ageList.map((item) => (
+            <MenuItem value={item}>{item}</MenuItem>
+          ))}
+        </Select>
         <TextField
           fullWidth
           id='textField-multiline-about'
@@ -153,10 +332,12 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
           multiline
           maxRows={4}
           variant='filled'
+          value={about}
+          onChange={changeAbout}
         />
       </div>
       <div className='participantsApplicationPopup-body'>
-        <Typography variant='title-2'>Контакты</Typography>
+        <Typography variant='title-2'>Контакты *</Typography>
         <div className='participantsApplicationPopup-fieldsContainer'>
           <FormControl fullWidth variant='filled'>
             <InputLabel htmlFor='textField-contactTelegramm'>Телеграмм</InputLabel>
@@ -170,10 +351,15 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
         </div>
       </div>
       <div className='participantsApplicationPopup-actionsContainer'>
-        <Button id='button-cancel' variant='contained' color='secondary' onClick={onCancel}>
+        <Button id='button-cancel' variant='contained' color='secondary' onClick={onClose}>
           Отмена
         </Button>
-        <Button id='button-submit' variant='contained' color='primary' onClick={onSubmit}>
+        <Button
+          id='button-submit'
+          variant='contained'
+          color='primary'
+          onClick={sendParticipantApplication}
+        >
           Отправить
         </Button>
       </div>

@@ -1,15 +1,13 @@
 import { FormControl, InputLabel, Select as SelectMUI } from '@mui/material';
 import { SelectProps as SelectMUIProps } from '@mui/material';
 
-export interface SelectProps extends SelectMUIProps {
+export interface MultipleSelectProps extends SelectMUIProps {
   id: string;
   label: string;
-  disabled?: boolean;
-  required?: boolean;
   minWidth?: string | number;
 }
 
-export const Select: React.FC<SelectProps> = ({
+export const MultipleSelect: React.FC<MultipleSelectProps> = ({
   children,
   value,
   onChange,
@@ -17,8 +15,7 @@ export const Select: React.FC<SelectProps> = ({
   label,
   required = false,
   disabled = false,
-  minWidth = 'auto',
-  ...props
+  minWidth = 'auto'
 }) => (
   <FormControl variant='filled' sx={{ minWidth }} disabled={disabled} required={required}>
     <InputLabel id={`select-${id}-helper-label`}>{label}</InputLabel>
@@ -27,7 +24,6 @@ export const Select: React.FC<SelectProps> = ({
       id={`select-${id}-filled`}
       value={value}
       onChange={onChange}
-      {...props}
     >
       {children}
     </SelectMUI>

@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import * as React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ParticipantsApplicationPopup } from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
+
+import type { PopupDataProps } from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
+
 import './App.css';
 
 declare module '@mui/material/styles' {
@@ -44,7 +47,15 @@ const theme = createTheme({
 });
 
 function App() {
-  const [viewPopup, setViewPopup] = useState(false);
+  const [viewPopup, setViewPopup] = React.useState(false);
+  const [popupData, setPopupData] = React.useState<PopupDataProps>({
+    participant: {
+      person: { lastName: '', firstName: '', middleName: '' },
+      address: { city: '', countryId: '' },
+      age: '',
+      about: ''
+    }
+  });
 
   const closePopup = () => {
     console.log(viewPopup, '111');
@@ -59,9 +70,9 @@ function App() {
       </div>
       {viewPopup && (
         <ParticipantsApplicationPopup
-          onCancel={closePopup}
+          popupData={popupData}
+          updatePopupData={setPopupData}
           onClose={closePopup}
-          onSubmit={closePopup}
         />
       )}
     </ThemeProvider>

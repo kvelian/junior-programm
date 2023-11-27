@@ -1,55 +1,61 @@
-import type { MockServerConfig } from "mock-config-server";
+import type { MockServerConfig } from 'mock-config-server';
 
 const CONTACTINFO = {
-  telegram: "telegram",
-  phone: "phone",
-  email: "email",
-  socialMedia: "socialMedia",
+  telegram: 'telegram',
+  phone: 'phone',
+  email: 'email',
+  socialMedia: 'socialMedia'
 };
 
+const COUNTRIES = [
+  { countryId: 'GBR', name: 'Великобритания' },
+  { countryId: 'USA', name: 'США' },
+  { countryId: 'RUS', name: 'Россия' }
+];
+
 const cities = [
-  { countryId: "GBR", region: "South-Eastern England", name: "London" },
-  { countryId: "USA", region: "Northeastern USA", name: "New York" },
-  { countryId: "RUS", region: "Moscow region", name: "Moscow" },
+  { countryId: 'GBR', region: 'South-Eastern England', city: 'London' },
+  { countryId: 'USA', region: 'Northeastern USA', city: 'New York' },
+  { countryId: 'RUS', region: 'Moscow region', city: 'Moscow' }
 ];
 
 const ADDRESS = {
   GBR: {
-    countryId: "GBR",
-    city: "London",
-    line1: "London street 1",
-    line2: "1",
+    countryId: 'GBR',
+    city: 'London',
+    line1: 'London street 1',
+    line2: '1'
   },
   USA: {
-    countryId: "USA",
-    city: "New York",
-    line1: "New York street 2",
-    line2: "2",
+    countryId: 'USA',
+    city: 'New York',
+    line1: 'New York street 2',
+    line2: '2'
   },
   RUS: {
-    countryId: "RUS",
-    city: "Moscow",
-    line1: "Moscow street 3",
-    line2: "3",
-  },
+    countryId: 'RUS',
+    city: 'Moscow',
+    line1: 'Moscow street 3',
+    line2: '3'
+  }
 };
 
 const EventsType = [
-  { id: 1, name: "Type 1" },
-  { id: 2, name: "Type 2" },
-  { id: 3, name: "Type 3" },
+  { id: 1, name: 'Type 1' },
+  { id: 2, name: 'Type 2' },
+  { id: 3, name: 'Type 3' }
 ];
 
 const EventsTheme = [
-  { id: 1, name: "Theme 1" },
-  { id: 2, name: "Theme 2" },
-  { id: 3, name: "Theme 3" },
+  { id: 1, name: 'Theme 1' },
+  { id: 2, name: 'Theme 2' },
+  { id: 3, name: 'Theme 3' }
 ];
 
 const PERSON = {
-  lastName: "Ivanov",
-  firstName: "Ivan",
-  middleName: "Ivanovich",
+  lastName: 'Ivanov',
+  firstName: 'Ivan',
+  middleName: 'Ivanovich'
 };
 
 const PARTICIPANT = {
@@ -57,35 +63,35 @@ const PARTICIPANT = {
     person: PERSON,
     age: 21,
     address: ADDRESS.GBR,
-    about: "about1",
+    about: 'about1'
   },
   P2: {
     person: PERSON,
     age: 22,
     address: ADDRESS.USA,
-    about: "about2",
+    about: 'about2'
   },
   P3: {
     person: PERSON,
     age: 23,
     address: ADDRESS.RUS,
-    about: "about3",
-  },
+    about: 'about3'
+  }
 };
 
 const SPONSOR = {
   legalEntity: true,
   person: PERSON,
-  name: "Sponsor",
-  contactInfo: CONTACTINFO,
+  name: 'Sponsor',
+  contactInfo: CONTACTINFO
 };
 
 const Event = [
   {
     id: 1,
-    name: "Успешный запрос",
-    description: "Event 1 description",
-    restrictions: "Event 1 restrictions",
+    name: 'Успешный запрос',
+    description: 'Event 1 description',
+    restrictions: 'Event 1 restrictions',
     typeId: 1,
     themeId: 1,
     online: true,
@@ -93,15 +99,15 @@ const Event = [
     dateTime: 1700412339336,
     participantsRange: {
       fromValue: 1,
-      toValue: 100,
+      toValue: 100
     },
-    sponsor: SPONSOR,
+    sponsor: SPONSOR
   },
   {
     id: 2,
-    name: "Неуспешный запрос",
-    description: "Event 2 description",
-    restrictions: "Event 2 restrictions",
+    name: 'Неуспешный запрос',
+    description: 'Event 2 description',
+    restrictions: 'Event 2 restrictions',
     typeId: 2,
     themeId: 2,
     online: true,
@@ -109,15 +115,15 @@ const Event = [
     dateTime: 1700412339336,
     participantsRange: {
       fromValue: 2,
-      toValue: 200,
+      toValue: 200
     },
-    sponsor: SPONSOR,
+    sponsor: SPONSOR
   },
   {
     id: 3,
-    name: "Таймаут",
-    description: "Event 3 description",
-    restrictions: "Event 3 restrictions",
+    name: 'Таймаут',
+    description: 'Event 3 description',
+    restrictions: 'Event 3 restrictions',
     typeId: 3,
     themeId: 3,
     online: true,
@@ -125,10 +131,10 @@ const Event = [
     dateTime: 1700412339336,
     participantsRange: {
       fromValue: 3,
-      toValue: 300,
+      toValue: 300
     },
-    sponsor: SPONSOR,
-  },
+    sponsor: SPONSOR
+  }
 ];
 
 const EventsRequest = [
@@ -136,20 +142,20 @@ const EventsRequest = [
     id: 1,
     status: 0,
     participant: PARTICIPANT.P1,
-    eventId: 1,
+    eventId: 1
   },
   {
     id: 2,
     status: 1,
     participant: PARTICIPANT.P2,
-    eventId: 2,
+    eventId: 2
   },
   {
     id: 3,
     status: 2,
     participant: PARTICIPANT.P3,
-    eventId: 3,
-  },
+    eventId: 3
+  }
 ];
 
 // class TodoService{
@@ -167,32 +173,52 @@ const EventsRequest = [
 // const todoService = new TodoService();
 
 export const mockServerConfig: MockServerConfig = {
-  baseUrl: "/api",
+  baseUrl: '/api',
   rest: {
     configs: [
       {
-        path: "/cities",
-        method: "get",
+        path: '/countries',
+        method: 'get',
+        routes: [
+          {
+            data: COUNTRIES,
+            interceptors: {
+              response: (data, { request }) => {
+                const { countryId, name } = request.query;
+                const countries = data.filter((country) => {
+                  if (countryId && country.countryId !== countryId) return false;
+                  if (name && country.name !== name) return false;
+                  return true;
+                });
+                return countries;
+              }
+            }
+          }
+        ]
+      },
+      {
+        path: '/countries/cities',
+        method: 'get',
         routes: [
           {
             data: cities,
             interceptors: {
               response: (data, { request }) => {
-                const { countryId, name } = request.query;
-                const cities = data.filter((city) => {
-                  if (countryId && city.countryId !== countryId) return false;
-                  if (name && city.name !== name) return false;
+                const { countryId, city } = request.query;
+                const cities = data.filter((cities) => {
+                  if (countryId && cities.countryId !== countryId) return false;
+                  if (city && cities.city !== city) return false;
                   return true;
                 });
                 return cities;
-              },
-            },
-          },
-        ],
+              }
+            }
+          }
+        ]
       },
       {
-        path: "/events",
-        method: "get",
+        path: '/events',
+        method: 'get',
         routes: [
           {
             data: Event,
@@ -200,57 +226,54 @@ export const mockServerConfig: MockServerConfig = {
               response: (data, { request }) => {
                 const { countryId, themeId, typeId, city } = request.query;
                 const events = data.filter((event) => {
-                  if (countryId && event.address.countryId !== countryId)
-                    return false;
+                  if (countryId && event.address.countryId !== countryId) return false;
                   if (
                     themeId &&
                     ((event.themeId !== themeId && !Array.isArray(themeId)) ||
-                      (Array.isArray(themeId) &&
-                        !themeId?.includes(event.themeId.toString())))
+                      (Array.isArray(themeId) && !themeId?.includes(event.themeId.toString())))
                   )
                     return false; // TODO: мультиселект
                   if (
                     typeId &&
                     ((event.typeId !== typeId && !Array.isArray(typeId)) ||
-                      (Array.isArray(typeId) &&
-                        !typeId?.includes(event.typeId.toString())))
+                      (Array.isArray(typeId) && !typeId?.includes(event.typeId.toString())))
                   )
                     return false; // TODO: мультиселект
                   if (city && event.address.city !== city) return false;
                   return true;
                 });
                 return events;
-              },
-            },
+              }
+            }
           },
           {
-            data: { success: false, message: "Event not found" },
+            data: { success: false, message: 'Event not found' },
             entities: {
               query: {
-                eventId: 2,
-              },
-            },
+                eventId: 2
+              }
+            }
           },
           {
-            data: { success: false, message: "408 Request Timeout" },
+            data: { success: false, message: '408 Request Timeout' },
             interceptors: {
               response: async (data, { setStatusCode, setDelay }) => {
                 await setDelay(2000);
                 setStatusCode(408);
                 return data;
-              },
+              }
             },
             entities: {
               query: {
-                eventId: 3,
-              },
-            },
-          },
-        ],
+                eventId: 3
+              }
+            }
+          }
+        ]
       },
       {
-        path: "/events/types",
-        method: "get",
+        path: '/events/types',
+        method: 'get',
         routes: [
           {
             data: EventsType,
@@ -263,14 +286,14 @@ export const mockServerConfig: MockServerConfig = {
                   return true;
                 });
                 return eventstype;
-              },
-            },
-          },
-        ],
+              }
+            }
+          }
+        ]
       },
       {
-        path: "/events/themes",
-        method: "get",
+        path: '/events/themes',
+        method: 'get',
         routes: [
           {
             data: EventsTheme,
@@ -283,50 +306,50 @@ export const mockServerConfig: MockServerConfig = {
                   return true;
                 });
                 return eventstheme;
-              },
-            },
-          },
-        ],
+              }
+            }
+          }
+        ]
       },
       {
-        path: "/events/:eventId/requests",
-        method: "post",
+        path: '/events/:eventId/requests',
+        method: 'post',
         routes: [
           {
             data: EventsRequest[0],
             entities: {
               params: {
-                eventId: 1,
-              },
-            },
+                eventId: 1
+              }
+            }
           },
           {
-            data: { success: false, message: "Event not found" },
+            data: { success: false, message: 'Event not found' },
             entities: {
               params: {
-                eventId: 2,
-              },
-            },
+                eventId: 2
+              }
+            }
           },
           {
-            data: { success: false, message: "408 Request Timeout" },
+            data: { success: false, message: '408 Request Timeout' },
             interceptors: {
               response: async (data, { setStatusCode, setDelay }) => {
                 await setDelay(2000);
                 setStatusCode(408);
                 return data;
-              },
+              }
             },
             entities: {
               params: {
-                eventId: 3,
-              },
-            },
-          },
-        ],
-      },
-    ],
-  },
+                eventId: 3
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
 };
 
 export default mockServerConfig;

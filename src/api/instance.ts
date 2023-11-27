@@ -9,6 +9,11 @@ export type Range = {
   toValue: number;
 };
 
+export type Countries = {
+  countryId: string;
+  name: string;
+};
+
 export type ContactInfo = {
   telegram: string;
   phone: string;
@@ -91,8 +96,17 @@ export interface EventRequestRes {
   eventId: Event['id'];
 }
 
+export const getCountries = async (countryId: string): Promise<Countries> => {
+  const { data } = await API.get('/countries', {
+    params: {
+      countryId
+    }
+  });
+  return data;
+};
+
 export const getCities = async (countryId: string): Promise<Cities> => {
-  const { data } = await API.get('/cities', {
+  const { data } = await API.get('/countries/cities', {
     params: {
       countryId
     }

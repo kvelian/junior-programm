@@ -1,4 +1,5 @@
 import type { MockServerConfig } from 'mock-config-server';
+import type { Country, GetEventsParams } from './src/api/instance';
 
 const CONTACTINFO = {
   telegram: 'telegram',
@@ -181,7 +182,7 @@ export const mockServerConfig: MockServerConfig = {
         method: 'get',
         routes: [
           {
-            data: COUNTRIES,
+            data: COUNTRIES as Country[],
             interceptors: {
               response: (data, { request }) => {
                 const { countryId, name } = request.query;
@@ -224,7 +225,7 @@ export const mockServerConfig: MockServerConfig = {
             data: Event,
             interceptors: {
               response: (data, { request }) => {
-                const { countryId, themeId, typeId, city } = request.query;
+                const { countryId, themeId, typeId, city } = request.query as GetEventsParams;
                 const events = data.filter((event) => {
                   if (countryId && event.address.countryId !== countryId) return false;
                   if (

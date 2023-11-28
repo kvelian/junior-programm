@@ -1,5 +1,13 @@
 import type { MockServerConfig } from 'mock-config-server';
-import type { Country, GetEventsParams } from './src/api/instance';
+import type {
+  City,
+  Country,
+  Event,
+  GetEventsParams,
+  EventType,
+  EventTheme,
+  EventRequest
+} from './src/api/instance';
 
 const CONTACTINFO = {
   telegram: 'telegram',
@@ -9,45 +17,53 @@ const CONTACTINFO = {
 };
 
 const COUNTRIES = [
-  { countryId: 'GBR', name: 'Великобритания' },
-  { countryId: 'USA', name: 'США' },
-  { countryId: 'RUS', name: 'Россия' }
+  { id: 'GBR', name: 'Великобритания' },
+  { id: 'USA', name: 'США' },
+  { id: 'RUS', name: 'Россия' }
 ];
 
-const cities = [
-  { countryId: 'GBR', region: 'South-Eastern England', city: 'London' },
-  { countryId: 'USA', region: 'Northeastern USA', city: 'New York' },
-  { countryId: 'RUS', region: 'Moscow region', city: 'Moscow' }
-];
+type Cities = {
+  [key: string]: City[];
+};
+
+type GetCitiesParams = {
+  countryId: string;
+};
+
+const CITIES = {
+  GBR: [{ id: 1, region: 'South-Eastern England', city: 'London' }],
+  USA: [{ id: 2, region: 'Northeastern USA', city: 'New York' }],
+  RUS: [{ id: 3, region: 'Moscow region', city: 'Moscow' }]
+};
 
 const ADDRESS = {
   GBR: {
     countryId: 'GBR',
-    city: 'London',
+    cityId: 11,
     line1: 'London street 1',
     line2: '1'
   },
   USA: {
     countryId: 'USA',
-    city: 'New York',
+    cityId: 21,
     line1: 'New York street 2',
     line2: '2'
   },
   RUS: {
     countryId: 'RUS',
-    city: 'Moscow',
+    cityId: 31,
     line1: 'Moscow street 3',
     line2: '3'
   }
 };
 
-const EventsType = [
+const EVENTS_TYPES = [
   { id: 1, name: 'Type 1' },
   { id: 2, name: 'Type 2' },
   { id: 3, name: 'Type 3' }
 ];
 
-const EventsTheme = [
+const EVENTS_THEMES = [
   { id: 1, name: 'Theme 1' },
   { id: 2, name: 'Theme 2' },
   { id: 3, name: 'Theme 3' }
@@ -64,19 +80,22 @@ const PARTICIPANT = {
     person: PERSON,
     age: 21,
     address: ADDRESS.GBR,
-    about: 'about1'
+    about: 'about1',
+    contactInfo: CONTACTINFO
   },
   P2: {
     person: PERSON,
     age: 22,
     address: ADDRESS.USA,
-    about: 'about2'
+    about: 'about2',
+    contactInfo: CONTACTINFO
   },
   P3: {
     person: PERSON,
     age: 23,
     address: ADDRESS.RUS,
-    about: 'about3'
+    about: 'about3',
+    contactInfo: CONTACTINFO
   }
 };
 
@@ -87,7 +106,7 @@ const SPONSOR = {
   contactInfo: CONTACTINFO
 };
 
-const Event = [
+const EVENTS = [
   {
     id: 1,
     name: 'Успешный запрос',
@@ -138,7 +157,7 @@ const Event = [
   }
 ];
 
-const EventsRequest = [
+const EVENTS_REQUESTS = [
   {
     id: 1,
     status: 0,
@@ -159,20 +178,6 @@ const EventsRequest = [
   }
 ];
 
-// class TodoService{
-//   constructor(baseUrl = 'http://localhost:31299/todos'){
-//       this.baseUrl = baseUrl;
-//   }
-//   getTodo() {return fetch(`${this.baseUrl}`).then((res) => res.text())}
-//   getTodos(id) {return fetch(`${this.baseUrl}/${id}`).then((res) => res.text())}
-//   deleteTodo(id) {return fetch(`${this.baseUrl}/${id}`, {method: 'DELETE'}).then((res) => res.text())}
-//   postTodos(body) {return fetch(`${this.baseUrl}`, {method: 'POST', headers: {
-//    'Content-Type': 'application/json; charset=utf-8'},body: JSON.stringify(body)}).then((res) => res.json())}
-//   putTodos = (id, body) => fetch(`${this.baseUrl}/${id}`, {method: 'PUT', headers: {'Content-Type': 'application/json; charset=utf-8'},body: JSON.stringify(body)}).then((res) => res.json())
-// }
-
-// const todoService = new TodoService();
-
 export const mockServerConfig: MockServerConfig = {
   baseUrl: '/api',
   rest: {
@@ -182,18 +187,7 @@ export const mockServerConfig: MockServerConfig = {
         method: 'get',
         routes: [
           {
-            data: COUNTRIES as Country[],
-            interceptors: {
-              response: (data, { request }) => {
-                const { countryId, name } = request.query;
-                const countries = data.filter((country) => {
-                  if (countryId && country.countryId !== countryId) return false;
-                  if (name && country.name !== name) return false;
-                  return true;
-                });
-                return countries;
-              }
-            }
+            data: COUNTRIES as Country[]
           }
         ]
       },
@@ -202,16 +196,11 @@ export const mockServerConfig: MockServerConfig = {
         method: 'get',
         routes: [
           {
-            data: cities,
+            data: CITIES as Cities,
             interceptors: {
               response: (data, { request }) => {
-                const { countryId, city } = request.query;
-                const cities = data.filter((cities) => {
-                  if (countryId && cities.countryId !== countryId) return false;
-                  if (city && cities.city !== city) return false;
-                  return true;
-                });
-                return cities;
+                const { countryId } = request.query as GetCitiesParams;
+                return data[countryId];
               }
             }
           }
@@ -222,25 +211,30 @@ export const mockServerConfig: MockServerConfig = {
         method: 'get',
         routes: [
           {
-            data: Event,
+            data: EVENTS as Event[],
             interceptors: {
               response: (data, { request }) => {
-                const { countryId, themeId, typeId, city } = request.query as GetEventsParams;
+                const { countryId, themeId, typeId, cityId } = request.query as GetEventsParams;
                 const events = data.filter((event) => {
                   if (countryId && event.address.countryId !== countryId) return false;
                   if (
                     themeId &&
-                    ((event.themeId !== themeId && !Array.isArray(themeId)) ||
-                      (Array.isArray(themeId) && !themeId?.includes(event.themeId.toString())))
+                    !(
+                      (!Array.isArray(themeId) && event.themeId.toString() === themeId) ||
+                      (Array.isArray(themeId) && themeId?.includes(event.themeId.toString()))
+                    )
                   )
-                    return false; // TODO: мультиселект
+                    return false;
+
                   if (
                     typeId &&
-                    ((event.typeId !== typeId && !Array.isArray(typeId)) ||
-                      (Array.isArray(typeId) && !typeId?.includes(event.typeId.toString())))
+                    !(
+                      (!Array.isArray(typeId) && event.typeId.toString() === typeId) ||
+                      (Array.isArray(typeId) && typeId?.includes(event.typeId.toString()))
+                    )
                   )
-                    return false; // TODO: мультиселект
-                  if (city && event.address.city !== city) return false;
+                    return false;
+                  if (cityId && event.address.cityId !== cityId) return false;
                   return true;
                 });
                 return events;
@@ -277,18 +271,7 @@ export const mockServerConfig: MockServerConfig = {
         method: 'get',
         routes: [
           {
-            data: EventsType,
-            interceptors: {
-              response: (data, { request }) => {
-                const { id, name } = request.query;
-                const eventstype = data.filter((eventstype) => {
-                  if (id && eventstype.id !== +id) return false;
-                  if (name && eventstype.name !== name) return false;
-                  return true;
-                });
-                return eventstype;
-              }
-            }
+            data: EVENTS_TYPES as EventType[]
           }
         ]
       },
@@ -297,18 +280,7 @@ export const mockServerConfig: MockServerConfig = {
         method: 'get',
         routes: [
           {
-            data: EventsTheme,
-            interceptors: {
-              response: (data, { request }) => {
-                const { id, name } = request.query;
-                const eventstheme = data.filter((eventstheme) => {
-                  if (id && eventstheme.id !== +id) return false;
-                  if (name && eventstheme.name !== name) return false;
-                  return true;
-                });
-                return eventstheme;
-              }
-            }
+            data: EVENTS_THEMES as EventTheme[]
           }
         ]
       },
@@ -317,7 +289,7 @@ export const mockServerConfig: MockServerConfig = {
         method: 'post',
         routes: [
           {
-            data: EventsRequest[0],
+            data: EVENTS_REQUESTS[0] as EventRequest,
             entities: {
               params: {
                 eventId: 1

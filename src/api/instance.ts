@@ -50,7 +50,7 @@ export type Address = {
 export type Participant = {
   person: Person;
   address?: Address;
-  age?: string;
+  age?: number;
   about?: string;
   contactInfo: ContactInfo;
 };
@@ -74,7 +74,7 @@ export type Event = {
   themeId: EventTheme['id'];
   online: boolean;
   address?: Address;
-  dataTime: number;
+  dateTime: number;
   participantsRange?: Range;
   sponsor: Sponsor;
 };

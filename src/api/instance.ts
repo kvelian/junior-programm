@@ -123,6 +123,7 @@ export const getEventsThemes = async (): Promise<EventTheme[]> => {
 };
 
 export const getEvents = async (params: GetEventsParams): Promise<Event[]> => {
+  console.log(params);
   const { data } = await API.get('/events', {
     params
   });

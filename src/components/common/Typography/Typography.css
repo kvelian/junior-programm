@@ -6,6 +6,8 @@
   font-style: normal;
   font-weight: 300;
   line-height: normal;
+
+  white-space: pre-wrap
 }
 
 .title-1 {

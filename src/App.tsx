@@ -5,6 +5,8 @@ import { ParticipantsApplicationPopup } from './components/ParticipantApplicatio
 import type { PopupDataProps } from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
 
 import './App.css';
+import { SuccessSendApplicationPopup } from './components/SuccessSendApplicationPopup/SuccessSendApplicationPopup';
+import { ContactInfo } from './api/instance';
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -47,31 +49,51 @@ const theme = createTheme({
 });
 
 function App() {
-  const [viewPopup, setViewPopup] = React.useState(false);
+  const [viewParticipantsApplicationPopup, setViewParticipantsApplicationPopup] =
+    React.useState(false);
   const [popupData, setPopupData] = React.useState<PopupDataProps>({
     participant: {
       person: { lastName: '', firstName: '' },
       contactInfo: {}
     },
-    event: {}
+    eventSearch: { eventTypes: [], eventThemes: [] }
   });
 
-  const closePopup = () => {
-    console.log(viewPopup, '111');
-    setViewPopup(false);
+  const [viewSuccessSendApplicationPopup, setViewSuccessSendApplicationPopup] =
+    React.useState(false);
+
+  const closeParticipantsApplicationPopup = () => {
+    setViewParticipantsApplicationPopup(false);
+  };
+
+  const submitParticipantsApplicationPopup = () => {
+    console.log('@@@@@', popupData.eventSearch.event?.sponsor.contactInfo);
+    setViewParticipantsApplicationPopup(false);
+    setViewSuccessSendApplicationPopup(true);
+  };
+
+  const closeSuccessSendApplicationPopup = () => {
+    setViewSuccessSendApplicationPopup(false);
   };
 
   return (
     <ThemeProvider theme={theme}>
       <div>
         <h1>Junior Programm</h1>
-        <button onClick={() => setViewPopup(true)}>Подать заявку</button>
+        <button onClick={() => setViewParticipantsApplicationPopup(true)}>Подать заявку</button>
       </div>
-      {viewPopup && (
+      {viewParticipantsApplicationPopup && (
         <ParticipantsApplicationPopup
           popupData={popupData}
           updatePopupData={setPopupData}
-          onClose={closePopup}
+          onClose={closeParticipantsApplicationPopup}
+          onSubmit={submitParticipantsApplicationPopup}
+        />
+      )}
+      {viewSuccessSendApplicationPopup && (
+        <SuccessSendApplicationPopup
+          onClose={closeSuccessSendApplicationPopup}
+          contactInfo={popupData.eventSearch.event?.sponsor.contactInfo}
         />
       )}
     </ThemeProvider>

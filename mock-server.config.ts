@@ -216,18 +216,30 @@ export const mockServerConfig: MockServerConfig = {
               response: (data: Event[], { request }) => {
                 const { countryId, themeId, typeId, cityId } = request.query as GetEventsParams;
                 const events = data.filter((event) => {
+                  console.log(countryId, cityId, event.typeId, typeId);
+                  console.log(
+                    typeId,
+                    !Array.isArray(typeId),
+                    event.typeId === typeId,
+                    Array.isArray(typeId),
+                    typeId?.includes(event.typeId.toString())
+                  );
                   if (countryId && event.address?.countryId !== countryId) return false;
                   if (cityId && event.address?.cityId !== +cityId) return false;
                   if (
                     themeId &&
-                    ((!Array.isArray(themeId) && event.themeId === themeId) ||
-                      (Array.isArray(themeId) && themeId?.includes(event.themeId)))
+                    !(
+                      (!Array.isArray(themeId) && event.themeId === themeId) ||
+                      (Array.isArray(themeId) && themeId?.includes(event.themeId.toString()))
+                    )
                   )
                     return false;
                   if (
                     typeId &&
-                    ((!Array.isArray(typeId) && event.typeId === typeId) ||
-                      (Array.isArray(typeId) && typeId?.includes(event.typeId)))
+                    !(
+                      (!Array.isArray(typeId) && event.typeId === typeId) ||
+                      (Array.isArray(typeId) && typeId?.includes(event.typeId.toString()))
+                    )
                   )
                     return false;
                   return true;

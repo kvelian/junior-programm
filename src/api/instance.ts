@@ -5,20 +5,26 @@ export const API = axios.create({
 });
 
 export type Range = {
-  fromValue: number;
-  toValue: number;
+  fromValue?: number;
+  toValue?: number;
 };
 
-export type Countries = {
-  countryId: string;
+export type Country = {
+  id: string;
   name: string;
 };
 
+export type City = {
+  id: number;
+  region: string;
+  city: string;
+};
+
 export type ContactInfo = {
-  telegram: string;
-  phone: string;
-  email: string;
-  socialMedia: string;
+  telegram?: string;
+  phone?: string;
+  email?: string;
+  socialMedia?: string;
 };
 
 export type Person = {
@@ -35,35 +41,31 @@ export type Sponsor = {
 };
 
 export type Address = {
-  countryId: string;
-  city: string;
+  countryId: Country['id'];
+  cityId: City['id'];
   line1?: string;
   line2?: string;
 };
 
 export type Participant = {
   person: Person;
-  address: Address;
-  age: string;
+  address?: Address;
+  age?: number;
   about?: string;
+  contactInfo: ContactInfo;
 };
 
-export interface Cities {
-  region: string;
-  city: Address['city'];
-}
-
-export interface EventType {
+export type EventType = {
   id: number;
   name: string;
-}
+};
 
-export interface EventTheme {
+export type EventTheme = {
   id: number;
   name: string;
-}
+};
 
-export interface Event {
+export type Event = {
   id: number;
   name: string;
   description: string;
@@ -72,16 +74,23 @@ export interface Event {
   themeId: EventTheme['id'];
   online: boolean;
   address?: Address;
-  dataTime: number;
+  dateTime: number;
   participantsRange?: Range;
   sponsor: Sponsor;
-}
+};
+
+export type EventRequest = {
+  id: number;
+  status: number;
+  participant: Participant;
+  eventId: Event['id'];
+};
 
 export interface GetEventsParams {
-  typeId: EventType['id'];
-  themeId: EventTheme['id'];
-  city: Address['city'];
-  countryId: Address['countryId'];
+  typeId?: EventType['id'][];
+  themeId?: EventTheme['id'][];
+  cityId?: City['id'];
+  countryId?: Country['id'];
 }
 
 export interface PostEventsRequestsParams {
@@ -89,23 +98,12 @@ export interface PostEventsRequestsParams {
   eventId: number;
 }
 
-export interface EventRequestRes {
-  id: number;
-  status: number;
-  participant: Participant;
-  eventId: Event['id'];
-}
-
-export const getCountries = async (countryId: string): Promise<Countries> => {
-  const { data } = await API.get('/countries', {
-    params: {
-      countryId
-    }
-  });
+export const getCountries = async (): Promise<Country[]> => {
+  const { data } = await API.get('/countries');
   return data;
 };
 
-export const getCities = async (countryId: string): Promise<Cities> => {
+export const getCities = async (countryId: string): Promise<City[]> => {
   const { data } = await API.get('/countries/cities', {
     params: {
       countryId
@@ -114,12 +112,12 @@ export const getCities = async (countryId: string): Promise<Cities> => {
   return data;
 };
 
-export const getEventsTypes = async (): Promise<EventType> => {
+export const getEventsTypes = async (): Promise<EventType[]> => {
   const { data } = await API.get('/events/types');
   return data;
 };
 
-export const getEventsThemes = async (): Promise<EventTheme> => {
+export const getEventsThemes = async (): Promise<EventTheme[]> => {
   const { data } = await API.get('/events/themes');
   return data;
 };
@@ -134,7 +132,7 @@ export const getEvents = async (params: GetEventsParams): Promise<Event[]> => {
 export const postEventsRequests = async ({
   participant,
   eventId
-}: PostEventsRequestsParams): Promise<EventRequestRes> => {
+}: PostEventsRequestsParams): Promise<EventRequest> => {
   const { data } = await API.post(`/events/${eventId}/requests`, { participant });
   return data;
 };

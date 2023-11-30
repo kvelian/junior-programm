@@ -50,11 +50,10 @@ function App() {
   const [viewPopup, setViewPopup] = React.useState(false);
   const [popupData, setPopupData] = React.useState<PopupDataProps>({
     participant: {
-      person: { lastName: '', firstName: '', middleName: '' },
-      address: { city: '', countryId: '' },
-      age: '',
-      about: ''
-    }
+      person: { lastName: '', firstName: '' },
+      contactInfo: {}
+    },
+    event: {}
   });
 
   const closePopup = () => {

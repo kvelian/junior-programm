@@ -39,19 +39,19 @@ const CITIES = {
 const ADDRESS = {
   GBR: {
     countryId: 'GBR',
-    cityId: 11,
+    cityId: CITIES.GBR[0].id,
     line1: 'London street 1',
     line2: '1'
   },
   USA: {
     countryId: 'USA',
-    cityId: 21,
+    cityId: CITIES.USA[0].id,
     line1: 'New York street 2',
     line2: '2'
   },
   RUS: {
     countryId: 'RUS',
-    cityId: 31,
+    cityId: CITIES.RUS[0].id,
     line1: 'Moscow street 3',
     line2: '3'
   }
@@ -106,7 +106,7 @@ const SPONSOR = {
   contactInfo: CONTACTINFO
 };
 
-const EVENTS = [
+const EVENTS: Event[] = [
   {
     id: 1,
     name: 'Успешный запрос',
@@ -213,28 +213,23 @@ export const mockServerConfig: MockServerConfig = {
           {
             data: EVENTS as Event[],
             interceptors: {
-              response: (data, { request }) => {
+              response: (data: Event[], { request }) => {
                 const { countryId, themeId, typeId, cityId } = request.query as GetEventsParams;
                 const events = data.filter((event) => {
-                  if (countryId && event.address.countryId !== countryId) return false;
+                  if (countryId && event.address?.countryId !== countryId) return false;
+                  if (cityId && event.address?.cityId !== +cityId) return false;
                   if (
                     themeId &&
-                    !(
-                      (!Array.isArray(themeId) && event.themeId.toString() === themeId) ||
-                      (Array.isArray(themeId) && themeId?.includes(event.themeId.toString()))
-                    )
+                    ((!Array.isArray(themeId) && event.themeId === themeId) ||
+                      (Array.isArray(themeId) && themeId?.includes(event.themeId)))
                   )
                     return false;
-
                   if (
                     typeId &&
-                    !(
-                      (!Array.isArray(typeId) && event.typeId.toString() === typeId) ||
-                      (Array.isArray(typeId) && typeId?.includes(event.typeId.toString()))
-                    )
+                    ((!Array.isArray(typeId) && event.typeId === typeId) ||
+                      (Array.isArray(typeId) && typeId?.includes(event.typeId)))
                   )
                     return false;
-                  if (cityId && event.address.cityId !== cityId) return false;
                   return true;
                 });
                 return events;

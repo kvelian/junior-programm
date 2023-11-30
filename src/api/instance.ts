@@ -98,12 +98,12 @@ export interface PostEventsRequestsParams {
   eventId: number;
 }
 
-export const getCountries = async (): Promise<Country> => {
+export const getCountries = async (): Promise<Country[]> => {
   const { data } = await API.get('/countries');
   return data;
 };
 
-export const getCities = async (countryId: string): Promise<City> => {
+export const getCities = async (countryId: string): Promise<City[]> => {
   const { data } = await API.get('/countries/cities', {
     params: {
       countryId
@@ -112,12 +112,12 @@ export const getCities = async (countryId: string): Promise<City> => {
   return data;
 };
 
-export const getEventsTypes = async (): Promise<EventType> => {
+export const getEventsTypes = async (): Promise<EventType[]> => {
   const { data } = await API.get('/events/types');
   return data;
 };
 
-export const getEventsThemes = async (): Promise<EventTheme> => {
+export const getEventsThemes = async (): Promise<EventTheme[]> => {
   const { data } = await API.get('/events/themes');
   return data;
 };

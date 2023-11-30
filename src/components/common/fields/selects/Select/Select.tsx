@@ -11,8 +11,6 @@ export interface SelectProps extends SelectMUIProps {
 
 export const Select: React.FC<SelectProps> = ({
   children,
-  value,
-  onChange,
   id,
   label,
   required = false,
@@ -22,13 +20,7 @@ export const Select: React.FC<SelectProps> = ({
 }) => (
   <FormControl variant='filled' sx={{ minWidth }} disabled={disabled} required={required}>
     <InputLabel id={`select-${id}-helper-label`}>{label}</InputLabel>
-    <SelectMUI
-      labelId={`select-${id}-filled-label`}
-      id={`select-${id}-filled`}
-      value={value}
-      onChange={onChange}
-      {...props}
-    >
+    <SelectMUI labelId={`select-${id}-filled-label`} id={`select-${id}-filled`} {...props}>
       {children}
     </SelectMUI>
   </FormControl>

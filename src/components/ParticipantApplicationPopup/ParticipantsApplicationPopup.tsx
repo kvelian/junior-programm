@@ -98,52 +98,53 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
     });
 
     const { countryId } = event;
-    if (!countryId) return;
-    getCities(countryId).then((data) => {
-      setCityList(data);
-    });
+    if (countryId)
+      getCities(countryId).then((data) => {
+        setCityList(data);
+      });
+    requestEvents();
   }, []);
 
-  const changeLastName = (e: SelectChangeEvent) => {
+  const changeLastName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const popupDataUpdated = { ...popupData };
     popupDataUpdated.participant.person[name as keyof Person] = value;
     updatePopupData(popupDataUpdated);
   };
 
-  const changeFirstName = (e: SelectChangeEvent) => {
+  const changeFirstName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const popupDataUpdated = { ...popupData };
     popupDataUpdated.participant.person.firstName = e.target.value;
     updatePopupData(popupDataUpdated);
   };
-  const changeMiddleName = (e: SelectChangeEvent) => {
+  const changeMiddleName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const popupDataUpdated = { ...popupData };
     popupDataUpdated.participant.person.middleName = e.target.value;
     updatePopupData(popupDataUpdated);
   };
-  const changeTelegram = (e: SelectChangeEvent) => {
+  const changeTelegram = (e: React.ChangeEvent<HTMLInputElement>) => {
     const popupDataUpdated = { ...popupData };
     popupDataUpdated.participant.contactInfo.telegram = e.target.value;
     updatePopupData(popupDataUpdated);
   };
-  const changeEmail = (e: SelectChangeEvent) => {
+  const changeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const popupDataUpdated = { ...popupData };
     popupDataUpdated.participant.contactInfo.email = e.target.value;
     updatePopupData(popupDataUpdated);
   };
-  const changePhone = (e: SelectChangeEvent) => {
+  const changePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
     const popupDataUpdated = { ...popupData };
     popupDataUpdated.participant.contactInfo.phone = e.target.value;
     updatePopupData(popupDataUpdated);
   };
-  const changeAbout = (e: SelectChangeEvent) => {
+  const changeAbout = (e: React.ChangeEvent<HTMLInputElement>) => {
     const popupDataUpdated = { ...popupData };
     popupDataUpdated.participant.about = e.target.value;
     updatePopupData(popupDataUpdated);
   };
-  const changeAge = (e: SelectChangeEvent) => {
+  const changeAge = (e: SelectChangeEvent<number>) => {
     const popupDataUpdated = { ...popupData };
-    popupDataUpdated.participant.age = e.target.value;
+    popupDataUpdated.participant.age = +e.target.value;
     updatePopupData(popupDataUpdated);
   };
   const changeCity = (e: SelectChangeEvent) => {
@@ -190,7 +191,7 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
     });
   };
 
-  const changeEvent = (e: SelectChangeEvent) => {
+  const changeEvent = (e: SelectChangeEvent<Event[]>) => {
     const popupDataUpdated = { ...popupData };
     popupDataUpdated.event.eventId = +e.target.value;
     updatePopupData(popupDataUpdated);

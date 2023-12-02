@@ -250,6 +250,12 @@ export const mockServerConfig: MockServerConfig = {
           },
           {
             data: { success: false, message: 'Event not found' },
+            interceptors: {
+              response: (data, { setStatusCode }) => {
+                setStatusCode(400);
+                return data;
+              }
+            },
             entities: {
               query: {
                 eventId: 2
@@ -305,6 +311,12 @@ export const mockServerConfig: MockServerConfig = {
           },
           {
             data: { success: false, message: 'Event not found' },
+            interceptors: {
+              response: (data, { setStatusCode }) => {
+                setStatusCode(400);
+                return data;
+              }
+            },
             entities: {
               params: {
                 eventId: 2

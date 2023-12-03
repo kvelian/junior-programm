@@ -31,9 +31,9 @@ type GetCitiesParams = {
 };
 
 const CITIES = {
-  GBR: [{ id: 1, region: 'South-Eastern England', city: 'London' }],
-  USA: [{ id: 2, region: 'Northeastern USA', city: 'New York' }],
-  RUS: [{ id: 3, region: 'Moscow region', city: 'Moscow' }]
+  GBR: [{ id: 1, region: 'South-Eastern England', city: 'Лондон' }],
+  USA: [{ id: 2, region: 'Northeastern USA', city: 'Нью-Йорк' }],
+  RUS: [{ id: 3, region: 'Moscow region', city: 'Москва' }]
 };
 
 const ADDRESS = {
@@ -58,15 +58,15 @@ const ADDRESS = {
 };
 
 const EVENTS_TYPES = [
-  { id: 1, name: 'Type 1' },
-  { id: 2, name: 'Type 2' },
-  { id: 3, name: 'Type 3' }
+  { id: 1, name: 'Тип 1' },
+  { id: 2, name: 'Тип 2' },
+  { id: 3, name: 'Тип 3' }
 ];
 
 const EVENTS_THEMES = [
-  { id: 1, name: 'Theme 1' },
-  { id: 2, name: 'Theme 2' },
-  { id: 3, name: 'Theme 3' }
+  { id: 1, name: 'Тема 1' },
+  { id: 2, name: 'Тема 2' },
+  { id: 3, name: 'Тема 3' }
 ];
 
 const PERSON = {

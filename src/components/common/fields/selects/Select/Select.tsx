@@ -20,7 +20,12 @@ export const Select: React.FC<SelectProps> = ({
 }) => (
   <FormControl variant='filled' sx={{ minWidth }} disabled={disabled} required={required}>
     <InputLabel id={`select-${id}-helper-label`}>{label}</InputLabel>
-    <SelectMUI labelId={`select-${id}-filled-label`} id={`select-${id}-filled`} {...props}>
+    <SelectMUI
+      defaultValue=''
+      labelId={`select-${id}-filled-label`}
+      id={`select-${id}-filled`}
+      {...props}
+    >
       {children}
     </SelectMUI>
   </FormControl>

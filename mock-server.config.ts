@@ -31,9 +31,9 @@ type GetCitiesParams = {
 };
 
 const CITIES = {
-  GBR: [{ id: 1, region: 'South-Eastern England', city: 'London' }],
-  USA: [{ id: 2, region: 'Northeastern USA', city: 'New York' }],
-  RUS: [{ id: 3, region: 'Moscow region', city: 'Moscow' }]
+  GBR: [{ id: 1, region: 'South-Eastern England', city: 'Лондон' }],
+  USA: [{ id: 2, region: 'Northeastern USA', city: 'Нью-Йорк' }],
+  RUS: [{ id: 3, region: 'Moscow region', city: 'Москва' }]
 };
 
 const ADDRESS = {
@@ -58,15 +58,15 @@ const ADDRESS = {
 };
 
 const EVENTS_TYPES = [
-  { id: 1, name: 'Type 1' },
-  { id: 2, name: 'Type 2' },
-  { id: 3, name: 'Type 3' }
+  { id: 1, name: 'Тип 1' },
+  { id: 2, name: 'Тип 2' },
+  { id: 3, name: 'Тип 3' }
 ];
 
 const EVENTS_THEMES = [
-  { id: 1, name: 'Theme 1' },
-  { id: 2, name: 'Theme 2' },
-  { id: 3, name: 'Theme 3' }
+  { id: 1, name: 'Тема 1' },
+  { id: 2, name: 'Тема 2' },
+  { id: 3, name: 'Тема 3' }
 ];
 
 const PERSON = {
@@ -216,18 +216,30 @@ export const mockServerConfig: MockServerConfig = {
               response: (data: Event[], { request }) => {
                 const { countryId, themeId, typeId, cityId } = request.query as GetEventsParams;
                 const events = data.filter((event) => {
+                  console.log(countryId, cityId, event.typeId, typeId);
+                  console.log(
+                    typeId,
+                    !Array.isArray(typeId),
+                    event.typeId === typeId,
+                    Array.isArray(typeId),
+                    typeId?.includes(event.typeId.toString())
+                  );
                   if (countryId && event.address?.countryId !== countryId) return false;
                   if (cityId && event.address?.cityId !== +cityId) return false;
                   if (
                     themeId &&
-                    ((!Array.isArray(themeId) && event.themeId === themeId) ||
-                      (Array.isArray(themeId) && themeId?.includes(event.themeId)))
+                    !(
+                      (!Array.isArray(themeId) && event.themeId === themeId) ||
+                      (Array.isArray(themeId) && themeId?.includes(event.themeId.toString()))
+                    )
                   )
                     return false;
                   if (
                     typeId &&
-                    ((!Array.isArray(typeId) && event.typeId === typeId) ||
-                      (Array.isArray(typeId) && typeId?.includes(event.typeId)))
+                    !(
+                      (!Array.isArray(typeId) && event.typeId === typeId) ||
+                      (Array.isArray(typeId) && typeId?.includes(event.typeId.toString()))
+                    )
                   )
                     return false;
                   return true;
@@ -238,6 +250,12 @@ export const mockServerConfig: MockServerConfig = {
           },
           {
             data: { success: false, message: 'Event not found' },
+            interceptors: {
+              response: (data, { setStatusCode }) => {
+                setStatusCode(400);
+                return data;
+              }
+            },
             entities: {
               query: {
                 eventId: 2
@@ -293,6 +311,12 @@ export const mockServerConfig: MockServerConfig = {
           },
           {
             data: { success: false, message: 'Event not found' },
+            interceptors: {
+              response: (data, { setStatusCode }) => {
+                setStatusCode(400);
+                return data;
+              }
+            },
             entities: {
               params: {
                 eventId: 2

@@ -41,8 +41,8 @@ export type Sponsor = {
 };
 
 export type Address = {
-  countryId: Country['id'];
-  cityId: City['id'];
+  countryId?: Country['id'];
+  cityId?: City['id'];
   line1?: string;
   line2?: string;
 };

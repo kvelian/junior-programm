@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { ParticipantsApplicationPopup } from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
-
+import {
+  initialPopupDataProps,
+  ParticipantsApplicationPopup
+} from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
 import type { PopupDataProps } from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
+import { SuccessSendApplicationPopup } from './components/SuccessSendApplicationPopup/SuccessSendApplicationPopup';
 
 import './App.css';
 
@@ -47,31 +50,45 @@ const theme = createTheme({
 });
 
 function App() {
-  const [viewPopup, setViewPopup] = React.useState(false);
-  const [popupData, setPopupData] = React.useState<PopupDataProps>({
-    participant: {
-      person: { lastName: '', firstName: '' },
-      contactInfo: {}
-    },
-    event: {}
-  });
+  const [viewParticipantsApplicationPopup, setViewParticipantsApplicationPopup] =
+    React.useState(false);
+  const [popupData, setPopupData] = React.useState<PopupDataProps>(initialPopupDataProps);
 
-  const closePopup = () => {
-    console.log(viewPopup, '111');
-    setViewPopup(false);
+  const [viewSuccessSendApplicationPopup, setViewSuccessSendApplicationPopup] =
+    React.useState(false);
+
+  const closeParticipantsApplicationPopup = () => {
+    setViewParticipantsApplicationPopup(false);
+  };
+
+  const submitParticipantsApplicationPopup = () => {
+    setViewParticipantsApplicationPopup(false);
+    setViewSuccessSendApplicationPopup(true);
+  };
+
+  const closeSuccessSendApplicationPopup = () => {
+    setPopupData(initialPopupDataProps);
+    setViewSuccessSendApplicationPopup(false);
   };
 
   return (
     <ThemeProvider theme={theme}>
       <div>
         <h1>Junior Programm</h1>
-        <button onClick={() => setViewPopup(true)}>Подать заявку</button>
+        <button onClick={() => setViewParticipantsApplicationPopup(true)}>Подать заявку</button>
       </div>
-      {viewPopup && (
+      {viewParticipantsApplicationPopup && (
         <ParticipantsApplicationPopup
           popupData={popupData}
           updatePopupData={setPopupData}
-          onClose={closePopup}
+          onClose={closeParticipantsApplicationPopup}
+          onSubmit={submitParticipantsApplicationPopup}
+        />
+      )}
+      {viewSuccessSendApplicationPopup && (
+        <SuccessSendApplicationPopup
+          onClose={closeSuccessSendApplicationPopup}
+          contactInfo={popupData.eventSearch.event?.sponsor?.contactInfo}
         />
       )}
     </ThemeProvider>

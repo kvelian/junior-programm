@@ -41,19 +41,19 @@ export const SuccessSendApplicationPopup: React.FC<SuccessSendApplicationPopupPr
         )}
         {contactInfo.phone && (
           <div className='successSendApplicationPopup-line'>
-            <Typography>Телеграм: </Typography>
+            <Typography>Телефон: </Typography>
             <Typography variant='title-2'>{contactInfo.phone}</Typography>
           </div>
         )}
         {contactInfo.email && (
           <div className='successSendApplicationPopup-line'>
-            <Typography>Телеграм: </Typography>
+            <Typography>Почта: </Typography>
             <Typography variant='title-2'>{contactInfo.email}</Typography>
           </div>
         )}
         {contactInfo.socialMedia && (
           <div className='successSendApplicationPopup-line'>
-            <Typography>Телеграм: </Typography>
+            <Typography>Соц. сети: </Typography>
             <Typography variant='title-2'>{contactInfo.socialMedia}</Typography>
           </div>
         )}

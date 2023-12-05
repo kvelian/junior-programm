@@ -15,7 +15,8 @@ import {
   IconButton,
   MenuItem,
   Box,
-  Chip
+  Chip,
+  Autocomplete
 } from '@mui/material';
 
 import type {
@@ -57,8 +58,8 @@ export interface PopupDataProps {
     event?: Event;
     eventTypes: string[];
     eventThemes: string[];
-    countryId?: Country['id'];
-    cityId?: City['id'];
+    country?: Country;
+    city: City;
   };
 }
 
@@ -68,6 +69,14 @@ export interface ParticipantsApplicationPopupProps {
   onClose: () => void;
   onSubmit: () => void;
 }
+
+export const initialPopupDataProps = {
+  participant: {
+    person: { lastName: '', firstName: '' },
+    contactInfo: {}
+  },
+  eventSearch: { eventTypes: [], eventThemes: [], city: { id: 0, city: '', region: '' } }
+};
 
 export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopupProps> = ({
   popupData,
@@ -98,9 +107,9 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
       setEventThemeList(data);
     });
 
-    const { countryId } = eventSearch;
-    if (countryId)
-      getCities(countryId).then((data) => {
+    const { country } = eventSearch;
+    if (country?.id)
+      getCities(country.id).then((data) => {
         setCityList(data);
       });
     if (eventSearch.event?.id) requestEvents();
@@ -131,19 +140,22 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
     updatePopupData(popupDataUpdated);
   };
 
-  const changeCity = (e: SelectChangeEvent) => {
+  const changeCity = (city: City) => {
     const popupDataUpdated = { ...popupData };
-    popupDataUpdated.eventSearch.cityId = e.target.value ? +e.target.value : undefined;
+    popupDataUpdated.eventSearch.city = city;
     updatePopupData(popupDataUpdated);
   };
-  const changeCountry = (e: SelectChangeEvent) => {
+
+  const changeCountry = (country?: Country) => {
     const popupDataUpdated = { ...popupData };
-    popupDataUpdated.eventSearch.countryId = e.target.value ? e.target.value : undefined;
-    if (!e.target.value) {
+    popupDataUpdated.eventSearch.country = country;
+    popupDataUpdated.eventSearch.city = { id: 0, city: '', region: '' };
+    updatePopupData(popupDataUpdated);
+    if (!country) {
       setCityList([]);
       return;
     }
-    getCities(e.target.value).then((data) => {
+    getCities(country.id).then((data) => {
       setCityList(data);
     });
   };
@@ -190,22 +202,29 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
 
   const requestEvents = () => {
     const reqParams: GetEventsParams = {
-      typeId: eventSearch.eventTypes.map(Number),
-      themeId: eventSearch.eventThemes.map(Number),
-      cityId: eventSearch.cityId,
-      countryId: eventSearch.countryId
+      ...(eventSearch.eventTypes && { typeId: eventSearch.eventTypes.map(Number) }),
+      ...(eventSearch.eventThemes && { themeId: eventSearch.eventThemes.map(Number) }),
+      ...(eventSearch.city.id && { cityId: eventSearch.city?.id }),
+      ...(eventSearch.country?.id && { countryId: eventSearch.country?.id })
     };
-    console.log(reqParams.typeId);
     getEvents(reqParams).then((data) => {
       setEventList(data);
     });
   };
 
   const sendParticipantApplication = () => {
-    console.log(eventSearch);
+    const userAddress = { ...address };
+    if (eventSearch.city.id) userAddress.cityId = eventSearch.city.id;
+    if (eventSearch.country?.id) userAddress.countryId = eventSearch.country.id;
     if (eventSearch.event?.id)
       postEventsRequests({
-        participant: { person, age, address, about, contactInfo },
+        participant: {
+          person,
+          age,
+          ...((userAddress.cityId || userAddress.countryId) && { address: userAddress }),
+          about,
+          contactInfo
+        },
         eventId: eventSearch.event.id
       }).then(() => {
         onSubmit();
@@ -223,39 +242,61 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
       <div className='participantsApplicationPopup-body'>
         <Typography variant='title-2'>Поиск события</Typography>
         <div className='participantsApplicationPopup-fieldsContainer'>
-          <Select
-            value={eventSearch.countryId}
-            onChange={changeCountry}
+          <Autocomplete
+            value={eventSearch.country}
+            onChange={(_event, newInputValue) => {
+              changeCountry(newInputValue);
+            }}
             id='country'
-            label='Страна'
-            minWidth={'calc((100% - 10px)/2)'}
-          >
-            <MenuItem key='country-none' value=''>
-              <em>None</em>
-            </MenuItem>
-            {countryList.map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                {item.name}
+            sx={{ minWidth: 'calc((100% - 10px)/2)' }}
+            options={countryList}
+            getOptionLabel={(option) => (option.name ? option.name : '')}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label='Страна'
+                variant='filled'
+                inputProps={{
+                  ...params.inputProps,
+                  autoComplete: 'new-password' // disable autocomplete and autofill
+                }}
+              />
+            )}
+            renderOption={(props, option) => (
+              <MenuItem {...props} key={option.id} value={option.id}>
+                {option.name}
               </MenuItem>
-            ))}
-          </Select>
-          <Select
-            value={eventSearch.cityId}
-            onChange={changeCity}
+            )}
+          ></Autocomplete>
+          <Autocomplete
+            value={eventSearch.city}
+            onChange={(_event, newInputValue) => {
+              changeCity(newInputValue);
+            }}
             id='city'
-            label='Город'
-            minWidth={'calc((100% - 10px)/2)'}
+            sx={{ minWidth: 'calc((100% - 10px)/2)' }}
             disabled={!cityList.length}
-          >
-            <MenuItem key='city-none' value=''>
-              <em>None</em>
-            </MenuItem>
-            {cityList.map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                {item.city}
+            options={cityList}
+            getOptionLabel={(option) => (option.city ? option.city : '')}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label='Город'
+                variant='filled'
+                inputProps={{
+                  ...params.inputProps,
+                  autoComplete: 'new-password' // disable autocomplete and autofill
+                }}
+              />
+            )}
+            renderOption={(props, option) => (
+              <MenuItem {...props} key={option.id} value={option.id}>
+                {option.city}
               </MenuItem>
-            ))}
-          </Select>
+            )}
+          ></Autocomplete>
         </div>
         <div className='participantsApplicationPopup-fieldsContainer'>
           <Select
@@ -366,11 +407,11 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
           />
           <TextField
             fullWidth
+            name='middleName'
             id='textField-personMiddleName'
             label='Отчество'
             variant='filled'
-            name='middleName'
-            value={person.middleName}
+            value={person.middleName ? person.middleName : ''}
             onChange={handlerChangePerson}
           />
         </div>
@@ -410,6 +451,7 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
           <FormControl fullWidth variant='filled'>
             <InputLabel htmlFor='textField-contactTelegramm'>Телеграмм</InputLabel>
             <FilledInput
+              name='telegram'
               id='textField-contactTelegramm'
               startAdornment={<InputAdornment position='start'>@</InputAdornment>}
               value={contactInfo.telegram}
@@ -418,6 +460,7 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
           </FormControl>
           <TextField
             fullWidth
+            name='phone'
             label='Телефон'
             variant='filled'
             value={contactInfo.phone}
@@ -425,6 +468,7 @@ export const ParticipantsApplicationPopup: React.FC<ParticipantsApplicationPopup
           />
           <TextField
             fullWidth
+            name='email'
             label='Email'
             variant='filled'
             value={contactInfo.email}

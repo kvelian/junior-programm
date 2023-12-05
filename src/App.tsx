@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { ParticipantsApplicationPopup } from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
-
+import {
+  initialPopupDataProps,
+  ParticipantsApplicationPopup
+} from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
 import type { PopupDataProps } from './components/ParticipantApplicationPopup/ParticipantsApplicationPopup';
+import { SuccessSendApplicationPopup } from './components/SuccessSendApplicationPopup/SuccessSendApplicationPopup';
 
 import './App.css';
-import { SuccessSendApplicationPopup } from './components/SuccessSendApplicationPopup/SuccessSendApplicationPopup';
-import { ContactInfo } from './api/instance';
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -51,13 +52,7 @@ const theme = createTheme({
 function App() {
   const [viewParticipantsApplicationPopup, setViewParticipantsApplicationPopup] =
     React.useState(false);
-  const [popupData, setPopupData] = React.useState<PopupDataProps>({
-    participant: {
-      person: { lastName: '', firstName: '' },
-      contactInfo: {}
-    },
-    eventSearch: { eventTypes: [], eventThemes: [] }
-  });
+  const [popupData, setPopupData] = React.useState<PopupDataProps>(initialPopupDataProps);
 
   const [viewSuccessSendApplicationPopup, setViewSuccessSendApplicationPopup] =
     React.useState(false);
@@ -67,12 +62,12 @@ function App() {
   };
 
   const submitParticipantsApplicationPopup = () => {
-    console.log('@@@@@', popupData.eventSearch.event?.sponsor.contactInfo);
     setViewParticipantsApplicationPopup(false);
     setViewSuccessSendApplicationPopup(true);
   };
 
   const closeSuccessSendApplicationPopup = () => {
+    setPopupData(initialPopupDataProps);
     setViewSuccessSendApplicationPopup(false);
   };
 
@@ -93,7 +88,7 @@ function App() {
       {viewSuccessSendApplicationPopup && (
         <SuccessSendApplicationPopup
           onClose={closeSuccessSendApplicationPopup}
-          contactInfo={popupData.eventSearch.event?.sponsor.contactInfo}
+          contactInfo={popupData.eventSearch.event?.sponsor?.contactInfo}
         />
       )}
     </ThemeProvider>

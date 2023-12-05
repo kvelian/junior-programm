@@ -41,8 +41,8 @@ export type Sponsor = {
 };
 
 export type Address = {
-  countryId: Country['id'];
-  cityId: City['id'];
+  countryId?: Country['id'];
+  cityId?: City['id'];
   line1?: string;
   line2?: string;
 };
@@ -123,7 +123,6 @@ export const getEventsThemes = async (): Promise<EventTheme[]> => {
 };
 
 export const getEvents = async (params: GetEventsParams): Promise<Event[]> => {
-  console.log(params);
   const { data } = await API.get('/events', {
     params
   });
